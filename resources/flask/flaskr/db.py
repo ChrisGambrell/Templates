@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import click
 import sqlite3
 from flask import current_app, g
