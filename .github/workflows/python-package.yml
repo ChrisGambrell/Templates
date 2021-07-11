@@ -26,9 +26,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        cd Tools/resources/flask
         python -m pip install --upgrade pip
         python -m pip install coverage flake8 pytest
-        python -m pip install -e ./Tools/resources/flask
+        python -m pip install -e .
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
