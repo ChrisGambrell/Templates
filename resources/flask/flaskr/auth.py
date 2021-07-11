@@ -2,7 +2,7 @@
 
 from flask import Blueprint, jsonify, request
 from flaskr.db import get_db
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
