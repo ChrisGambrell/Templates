@@ -12,7 +12,7 @@ bp = Blueprint('task', __name__, url_prefix='/task')
 @bp.route('/', methods=['GET'])
 def get_tasks():
     db = get_db()
-    tasks = db.execute('SELECT * FROM task ORDER BY created_at')
+    tasks = db.execute('SELECT * FROM task ORDER BY created_at').fetchall()
     
     return jsonify([{key: task[key] for key in task.keys()} for task in tasks])
 
