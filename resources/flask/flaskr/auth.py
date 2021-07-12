@@ -27,7 +27,7 @@ def register():
         error = f'Username {username} is taken.'
 
     if error is not None:
-        return jsonify({error: error})
+        return jsonify({"error": error})
 
     db.execute('INSERT INTO user (name, username, password) VALUES (?, ?, ?)', (name, username, generate_password_hash(password)))
     db.commit()
