@@ -1,8 +1,36 @@
 #!/usr/bin/env python3
 
+import functools
+import jwt
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flaskr.db import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
+
+
+def validate_token(token):
+    try:
+        decoded_token = jwt.decode(token, 'secret', algorithms=['HS256'])
+        expires = decoded_token.get('expires', None)
+
+        if expires and expires > datetime.now().timestamp():
+            return {}
+        else:
+            return {'error': 'Token has expired.'}
+    except:
+        return {'error': 'Invalid token.'}
+
+
+def login_required(endpoint):
+    @functools.wraps(endpoint)
+    def wrapped_endpoint(**kwargs):
+        valid_token = validate_token(kwargs.get('token', ''))
+        if valid_token.get('error'):
+            return jsonify(valid_token)
+
+        return endpoint(**kwargs)
+    return wrapped_endpoint
+
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
