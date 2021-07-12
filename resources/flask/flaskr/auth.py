@@ -2,19 +2,25 @@
 
 import functools
 import jwt
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request
 from flaskr.db import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-def validate_token(token):
+def validate_token():
+    authorization = request.headers.get('Authorization', '')
+    if len(authorization.split('Bearer ')) > 1:
+        token = authorization.split('Bearer ')[1]
+    else:
+        return {'error': 'Invalid token.'}
+
     try:
         decoded_token = jwt.decode(token, 'secret', algorithms=['HS256'])
         expires = decoded_token.get('expires', None)
 
         if expires and expires > datetime.now().timestamp():
-            return {}
+            return {'user_id': decoded_token['user_id']}
         else:
             return {'error': 'Token has expired.'}
     except:
@@ -24,11 +30,11 @@ def validate_token(token):
 def login_required(endpoint):
     @functools.wraps(endpoint)
     def wrapped_endpoint(**kwargs):
-        valid_token = validate_token(kwargs.get('token', ''))
+        valid_token = validate_token()
         if valid_token.get('error'):
             return jsonify(valid_token)
 
-        return endpoint(**kwargs)
+        return endpoint(user_id=valid_token['user_id'], **kwargs)
     return wrapped_endpoint
 
 
@@ -63,7 +69,10 @@ def login():
     if error:
         return jsonify({'error': error})
 
-    return jsonify(user_data)
+    return jsonify({'token': jwt.encode({
+        'user_id': user_data['id'],
+        'expires': (datetime.now() + timedelta(days=30)).timestamp()
+    }, 'secret', algorithm='HS256')})
 
 
 @bp.route('/register', methods=['POST'])
