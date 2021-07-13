@@ -8,24 +8,33 @@ bp = Blueprint('task', __name__, url_prefix='/task')
 
 
 @bp.route('/<task_id>', methods=['GET'])
-def get_task_by_id(task_id):
+@login_required
+def get_task_by_id(user_id, task_id):
     db = get_db()
+    error = None
     task = db.execute('SELECT * FROM task WHERE id = ?', (task_id)).fetchone()
+
+    if task['user_id'] != user_id:
+        error = 'Access denied.'
+
+    if error:
+        return jsonify({'error': error})
 
     return jsonify({key: task[key] for key in task.keys()})
 
 
 @bp.route('/', methods=['GET'])
-def get_tasks():
+@login_required
+def get_tasks(user_id):
     db = get_db()
-    tasks = db.execute('SELECT * FROM task ORDER BY created_at').fetchall()
+    tasks = db.execute('SELECT * FROM task WHERE user_id = ? ORDER BY created_at', (user_id,)).fetchall()
 
     return jsonify([{key: task[key] for key in task.keys()} for task in tasks])
 
 
 @bp.route('/', methods=['POST'])
 @login_required
-def create_task(user_id, **kwargs):
+def create_task(user_id):
     data = request.get_json() if request.get_json() is not None else {}
     body = data.get('body', None)
 
