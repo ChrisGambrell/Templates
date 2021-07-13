@@ -26,7 +26,7 @@ def auth(client):
 @pytest.mark.parametrize(('token', 'body', 'message'), (
     (jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'secret', algorithm='HS256'), 'Test body', 'Invalid token.'),
     ('Bearer ' + jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'secret', algorithm='HS256'), 'Test body', 'Token has expired.'),
-    ('Bearer ' + jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'secret', algorithm='HS512'), 'Test body', 'Invalid token.')
+    ('Bearer ' + jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'bad_secret', algorithm='HS256'), 'Test body', 'Invalid token.')
 ))
 def test_validate_token(client, token, body, message):
     response = client.post('/task/', json={'body': body}, headers={'Authorization': token})

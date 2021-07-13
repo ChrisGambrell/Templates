@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import pytest
+from test_auth import auth
 
 
 class TaskActions(object):
