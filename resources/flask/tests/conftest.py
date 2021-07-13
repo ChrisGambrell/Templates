@@ -62,8 +62,8 @@ class TaskActions(object):
         self._auth = auth
         self._client = client
 
-    def create_task(self, body='Test body'):
-        return self._client.post('/task/', json={'body': body}, headers=self._auth.get_auth_header())
+    def create_task(self, username='username', password='password', body='Test body'):
+        return self._client.post('/task/', json={'body': body}, headers=self._auth.get_auth_header(username, password))
 
 
 @pytest.fixture

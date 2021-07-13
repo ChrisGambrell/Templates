@@ -34,7 +34,7 @@ def test_login_validate_input(auth, username, password, message):
     ('user', '', '', 'Username is required.'),
     ('user', 'username', '', 'Password is required.'),
     ('user', 'username', 'password', 'is taken.'),
-    ('user', 'username2', 'password', '')
+    ('user', 'username3', 'password', '')
 ))
 def test_register_validate_input(client, name, username, password, message):
     response = client.post('/auth/register', json={'name': name, 'username': username, 'password': password})
