@@ -8,33 +8,25 @@ from flaskr.db import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-def validate_token():
-    authorization = request.headers.get('Authorization', '')
-    if len(authorization.split('Bearer ')) > 1:
-        token = authorization.split('Bearer ')[1]
-    else:
-        return {'error': 'Invalid token.'}
-
-    try:
-        decoded_token = jwt.decode(token, 'secret', algorithms=['HS256'])
-        expires = decoded_token.get('expires', None)
-
-        if expires and expires > datetime.now().timestamp():
-            return {'user_id': decoded_token['user_id']}
-        else:
-            return {'error': 'Token has expired.'}
-    except:
-        return {'error': 'Invalid token.'}
-
-
 def login_required(endpoint):
     @functools.wraps(endpoint)
     def wrapped_endpoint(**kwargs):
-        valid_token = validate_token()
-        if valid_token.get('error'):
-            return jsonify(valid_token)
+        authorization = request.headers.get('Authorization', '')
+        if len(authorization.split('Bearer ')) > 1:
+            token = authorization.split('Bearer ')[1]
+        else:
+            return jsonify({'error': 'Invalid token.'})
 
-        return endpoint(user_id=valid_token['user_id'], **kwargs)
+        try:
+            decoded_token = jwt.decode(token, 'secret', algorithms=['HS256'])
+            expires = decoded_token.get('expires', None)
+
+            if expires and expires > datetime.now().timestamp():
+                return endpoint(user_id=decoded_token['user_id'], **kwargs)
+            else:
+                return jsonify({'error': 'Token has expired.'})
+        except:
+            return jsonify({'error': 'Invalid token.'})
     return wrapped_endpoint
 
 
