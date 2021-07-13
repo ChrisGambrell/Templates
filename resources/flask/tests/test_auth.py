@@ -5,24 +5,6 @@ import pytest
 from datetime import datetime
 
 
-class AuthActions(object):
-    def __init__(self, client):
-        self._client = client
-
-    def login(self, username='username', password='password'):
-        return self._client.post('/auth/login', json={'username': username, 'password': password})
-
-    def get_auth_header(self, username='username', password='password'):
-        response = self.login(username, password)
-        data = response.get_json() if response.get_json() is not None else {}
-        return {'Authorization': f'Bearer {data.get("token", "")}'}
-
-
-@pytest.fixture
-def auth(client):
-    return AuthActions(client)
-
-
 @pytest.mark.parametrize(('token', 'body', 'message'), (
     (jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'secret', algorithm='HS256'), 'Test body', 'Invalid token.'),
     ('Bearer ' + jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'secret', algorithm='HS256'), 'Test body', 'Token has expired.'),

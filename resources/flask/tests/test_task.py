@@ -3,20 +3,6 @@
 import pytest
 
 
-class TaskActions(object):
-    def __init__(self, auth, client):
-        self._auth = auth
-        self._client = client
-
-    def create_task(self, body='Test body'):
-        return self._client.post('/task/', json={'body': body}, headers=self._auth.get_auth_header())
-
-
-@pytest.fixture
-def task(auth, client):
-    return TaskActions(auth, client)
-
-
 def test_get_tasks(auth, client):
     auth_header = auth.get_auth_header()
     response = client.get('/task/', headers=auth_header)
