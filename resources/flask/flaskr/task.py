@@ -7,6 +7,14 @@ from flaskr.db import get_db
 bp = Blueprint('task', __name__, url_prefix='/task')
 
 
+@bp.route('/<task_id>', methods=['GET'])
+def get_task_by_id(task_id):
+    db = get_db()
+    task = db.execute('SELECT * FROM task WHERE id = ?', (task_id)).fetchone()
+
+    return jsonify({key: task[key] for key in task.keys()})
+
+
 @bp.route('/', methods=['GET'])
 def get_tasks():
     db = get_db()

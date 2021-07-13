@@ -3,9 +3,14 @@
 import pytest
 
 
-def test_get_tasks(auth, client):
-    auth_header = auth.get_auth_header()
-    response = client.get('/task/', headers=auth_header)
+def test_get_task_by_id(client):
+    response = client.get('/task/1')
+    data = response.get_json() if response.get_json() is not None else {}
+    assert type(data) is dict
+
+
+def test_get_tasks(client):
+    response = client.get('/task/')
     data = response.get_json() if response.get_json() is not None else {}
     assert type(data) is list
 
