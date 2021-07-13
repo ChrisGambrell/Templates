@@ -3,16 +3,17 @@
 import pytest
 
 
-@pytest.mark.parametrize(('access_username', 'message'), (
-    ('username2', 'Access denied.'),
-    ('username', '')
+@pytest.mark.parametrize(('use_task_id', 'access_username', 'message'), (
+    (False, 'username', 'Task does not exist.'),
+    (True, 'username2', 'Access denied.'),
+    (True, 'username', '')
 ))
-def test_get_task_by_id(auth, client, task, access_username, message):
+def test_get_task_by_id(auth, client, task, use_task_id, access_username, message):
     response = task.create_task(username='username')
     new_task = response.get_json() if response.get_json() is not None else {}
     
     auth_header = auth.get_auth_header(username=access_username)
-    response = client.get(f'/task/{new_task.get("id", "")}', headers=auth_header)
+    response = client.get(f'/task/{new_task.get("id", "") if use_task_id else "a"}', headers=auth_header)
     data = response.get_json() if response.get_json() is not None else {}
 
     assert message in data.get('error', '')

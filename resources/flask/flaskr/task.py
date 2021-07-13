@@ -14,7 +14,9 @@ def get_task_by_id(user_id, task_id):
     error = None
     task = db.execute('SELECT * FROM task WHERE id = ?', (task_id)).fetchone()
 
-    if task['user_id'] != user_id:
+    if task is None:
+        error = 'Task does not exist.'
+    elif task['user_id'] != user_id:
         error = 'Access denied.'
 
     if error:
