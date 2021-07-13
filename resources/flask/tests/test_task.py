@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import pytest
-from test_auth import auth
 
 
 class TaskActions(object):
@@ -33,4 +32,3 @@ def test_create_task_validate_input(task, body, message):
     response = task.create_task(body)
     data = response.get_json() if response.get_json() is not None else {}
     assert message in data.get('error', '')
-

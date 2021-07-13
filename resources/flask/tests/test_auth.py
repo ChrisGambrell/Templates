@@ -2,7 +2,7 @@
 
 import jwt
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class AuthActions(object):

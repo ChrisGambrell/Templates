@@ -25,7 +25,7 @@ def login_required(endpoint):
                 return endpoint(user_id=decoded_token['user_id'], **kwargs)
             else:
                 return jsonify({'error': 'Token has expired.'})
-        except:
+        except jwt.exceptions.DecodeError:
             return jsonify({'error': 'Invalid token.'})
     return wrapped_endpoint
 

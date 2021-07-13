@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import json
-import sys
 from flask import Blueprint, jsonify, request
 from flaskr.auth import login_required
 from flaskr.db import get_db
@@ -13,7 +11,7 @@ bp = Blueprint('task', __name__, url_prefix='/task')
 def get_tasks():
     db = get_db()
     tasks = db.execute('SELECT * FROM task ORDER BY created_at').fetchall()
-    
+
     return jsonify([{key: task[key] for key in task.keys()} for task in tasks])
 
 
