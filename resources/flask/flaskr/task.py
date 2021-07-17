@@ -2,7 +2,7 @@
 
 import functools
 from flask import Blueprint, jsonify, request
-from flaskr.auth import login, login_required
+from flaskr.auth import login_required
 from flaskr.db import get_db
 
 bp = Blueprint('task', __name__, url_prefix='/task')
@@ -18,7 +18,7 @@ def owner(endpoint):
             return jsonify({'error': 'Task does not exist.'})
         elif task['user_id'] != kwargs.get('user_id', ''):
             return jsonify({'error': 'Access denied.'})
-        
+
         return endpoint(**kwargs)
     return wrapped_endpoint
 

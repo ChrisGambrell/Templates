@@ -8,7 +8,6 @@ from flaskr.db import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-### TODO: make sure user exists before validating login perhaps with including pwd hash
 def login_required(endpoint):
     @functools.wraps(endpoint)
     def wrapped_endpoint(**kwargs):
