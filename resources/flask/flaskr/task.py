@@ -55,22 +55,19 @@ def create_task(user_id, **kwargs):
     return jsonify({key: new_task[key] for key in new_task.keys()})
 
 
-@bp.route('/<task_id>', methods=['GET'])
+@bp.route('/<task_id>', methods=['PATCH'])
 @login_required
 @owner
-def get_task_by_id(task_id, **kwargs):
+def edit_task(task_id, **kwargs):
+    data = request.get_json() if request.get_json() is not None else {}
     db = get_db()
     task = db.execute('SELECT * FROM task WHERE id = ?', (task_id)).fetchone()
+    
+    updated_task = {key: data.get(key, task[key]) for key in task.keys()}
 
-    return jsonify({key: task[key] for key in task.keys()})
-
-
-@bp.route('/<task_id>', methods=['DELETE'])
-@login_required
-@owner
-def delete_task(task_id, **kwargs):
-    db = get_db()
-    db.execute('DELETE FROM task WHERE id = ?', (task_id))
+    db.execute('UPDATE task SET body = ?, completed = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', (updated_task['body'], updated_task['completed'], task_id))
     db.commit()
 
-    return jsonify({})
+    updated_task = db.execute('SELECT * FROM task WHERE id = ?', (task_id)).fetchone()
+
+    return jsonify({key: updated_task[key] for key in updated_task.keys()})

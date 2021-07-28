@@ -3,20 +3,20 @@
 import pytest
 
 
-@pytest.mark.parametrize(('use_task_id', 'access_username', 'message'), (
-    (False, 'username', 'Task does not exist.'),
-    (True, 'username2', 'Access denied.'),
-    (True, 'username', '')
-))
-def test_get_task_by_id(auth, client, task, use_task_id, access_username, message):
-    response = task.create_task(username='username')
-    new_task = response.get_json() if response.get_json() is not None else {}
+# @pytest.mark.parametrize(('use_task_id', 'access_username', 'message'), (
+#     (False, 'username', 'Task does not exist.'),
+#     (True, 'username2', 'Access denied.'),
+#     (True, 'username', '')
+# ))
+# def test_get_task_by_id(auth, client, task, use_task_id, access_username, message):
+#     response = task.create_task(username='username')
+#     new_task = response.get_json() if response.get_json() is not None else {}
 
-    auth_header = auth.get_auth_header(username=access_username)
-    response = client.get(f'/task/{new_task.get("id", "") if use_task_id else "a"}', headers=auth_header)
-    data = response.get_json() if response.get_json() is not None else {}
+#     auth_header = auth.get_auth_header(username=access_username)
+#     response = client.get(f'/task/{new_task.get("id", "") if use_task_id else "a"}', headers=auth_header)
+#     data = response.get_json() if response.get_json() is not None else {}
 
-    assert message in data.get('error', '')
+#     assert message in data.get('error', '')
 
 
 def test_get_tasks(auth, client):
@@ -36,17 +36,19 @@ def test_create_task_validate_input(task, body, message):
     assert message in data.get('error', '')
 
 
-@pytest.mark.parametrize(('use_task_id', 'access_username', 'message'), (
-    (False, 'username', 'Task does not exist.'),
-    (True, 'username2', 'Access denied.'),
-    (True, 'username', '')
+@pytest.mark.parametrize(('use_task_id', 'access_username', 'body', 'completed', 'message'), (
+    (False, 'username', '', False, 'Task does not exist'),
+    (True, 'username2', '', False, 'Access denied.'),
+    (True, 'username', 'Updated body', False, ''),
+    (True, 'username', '', False, ''),
+    (True, 'username', 'Updated body', True, '')
 ))
-def test_delete_task(auth, client, task, use_task_id, access_username, message):
+def test_edit_task(auth, client, task, use_task_id, access_username, body, completed, message):
     response = task.create_task(username='username')
     new_task = response.get_json() if response.get_json() is not None else {}
 
     auth_header = auth.get_auth_header(username=access_username)
-    response = client.delete(f'/task/{new_task.get("id", "") if use_task_id else "a"}', headers=auth_header)
+    response = client.patch(f'/task/{new_task.get("id", "") if use_task_id else "a"}', headers=auth_header)
     data = response.get_json() if response.get_json() is not None else {}
 
     assert message in data.get('error', '')
