@@ -62,7 +62,7 @@ def edit_task(task_id, **kwargs):
     data = request.get_json() if request.get_json() is not None else {}
     db = get_db()
     task = db.execute('SELECT * FROM task WHERE id = ?', (task_id)).fetchone()
-    
+
     updated_task = {key: data.get(key, task[key]) for key in task.keys()}
 
     db.execute('UPDATE task SET body = ?, completed = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?', (updated_task['body'], updated_task['completed'], task_id))
