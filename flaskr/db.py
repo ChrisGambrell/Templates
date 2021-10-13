@@ -15,7 +15,7 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    tasks = db.relationship('Task', back_populates='user')
+    tasks = db.relationship('Task', back_populates='user', cascade='all, delete')
 
 
 class Task(db.Model):
