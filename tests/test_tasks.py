@@ -61,7 +61,6 @@ def test_delete_task(task):
     num_tasks = Task.query.filter_by(user_id=new_task['user_id']).count()
 
     response = task.delete(task_id=new_task['id'])
-    data = parse_data(response)
 
     assert Task.query.filter_by(user_id=new_task['user_id']).count() < num_tasks
 
