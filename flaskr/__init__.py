@@ -1,40 +1,45 @@
 #!/usr/bin/env python3
 
 import os
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
+from flaskr.utils import parse_data
 
 
 def create_app(test_config=None):
-    # Create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(SECRET_KEY='dev', DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'))
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(os.path.join(app.instance_path, 'flaskr.sqlite'))
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+    CORS(app)
 
-    if test_config is None:
-        # Load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # Load the test config if passed in
+    if test_config is not None:
         app.config.from_mapping(test_config)
 
-    # Ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
 
-    # A simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'hello, world!'
-
     from . import db
     db.init_app(app)
 
-    from . import auth
-    app.register_blueprint(auth.bp)
+    with app.app_context():
+        from flaskr.utils import login_required
 
-    from . import task
-    app.register_blueprint(task.bp)
-    app.add_url_rule('/', endpoint='index')
+        @app.route('/hello')
+        def hello():
+            return 'hello, world!'
+
+        @app.route('/secret')
+        @login_required
+        @parse_data
+        def secret(authed_user, **kwargs):
+            return jsonify({'hello': authed_user.name})
+
+        from . import auth
+        app.register_blueprint(auth.bp)
+
+        from . import tasks
+        app.register_blueprint(tasks.bp)
 
     return app

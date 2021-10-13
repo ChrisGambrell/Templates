@@ -12,10 +12,10 @@ setup(
         'cerberus',
         'coverage',
         'flask',
-        'flas-cors',
+        'flask-cors',
         'flask-marshmallow',
         'flask-sqlalchemy',
-        'marshmallow-sqlachemy',
+        'marshmallow-sqlalchemy',
         'pyjwt',
         'pytest'
     ]

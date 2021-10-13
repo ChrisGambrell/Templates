@@ -3,40 +3,42 @@
 import jwt
 import pytest
 from datetime import datetime
+from flaskr.db import User
+from tests.conftest import parse_data
 
 
-@pytest.mark.parametrize(('token', 'body', 'message'), (
-    (jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'secret', algorithm='HS256'), 'Test body', 'Invalid token.'),
-    ('Bearer ' + jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'secret', algorithm='HS256'), 'Test body', 'Token has expired.'),
-    ('Bearer ' + jwt.encode({'user_id': 0, 'expires': datetime.now().timestamp()}, 'bad_secret', algorithm='HS256'), 'Test body', 'Invalid token.')
+@pytest.mark.parametrize(('username', 'password', 'status', 'error'), (
+    ('', '', 400, 'Username is required.'),
+    ('username', '', 400, 'Password is required.'),
+    ('foobar', 'password', 401, 'Username is incorrect.'),
+    ('username', 'foobar', 401, 'Password is incorrect.'),
+    ('username', 'password', 200, '')
 ))
-def test_validate_token(client, token, body, message):
-    response = client.post('/task/', json={'body': body}, headers={'Authorization': token})
-    data = response.get_json() if response.get_json() is not None else {}
-    assert message in data.get('error', '')
+def test_validate_login_input(auth, username, password, status, error):
+    response = auth.login(data={'username': username, 'password': password})
+    data = parse_data(response)
+
+    assert response.status_code == status
+    assert data.get('error', '') == error
 
 
-@pytest.mark.parametrize(('username', 'password', 'message'), (
-    ('', '', 'Username is required.'),
-    ('username', '', 'Password is required.'),
-    ('user', 'password', 'Username is incorrect.'),
-    ('username', 'pass', 'Password is incorrect.'),
-    ('username', 'password', '')
+@pytest.mark.parametrize(('name', 'username', 'password', 'status', 'error'), (
+    ('', '', '', 400, 'Name is required.'),
+    ('John Doe', '', '', 400, 'Username is required.'),
+    ('John Doe', 'jdoe', '', 400, 'Password is required.'),
+    ('John Doe', 'username', 'password', 401, 'Username is taken.'),
+    ('John Doe', 'jdoe', 'password', 200, '')
 ))
-def test_login_validate_input(auth, username, password, message):
-    response = auth.login(username, password)
-    data = response.get_json() if response.get_json() is not None else {}
-    assert message in data.get('error', '')
+def test_validate_register_input(auth, name, username, password, status, error):
+    response = auth.register(data={'name': name, 'username': username, 'password': password})
+    data = parse_data(response)
+
+    assert response.status_code == status
+    assert data.get('error', '') == error
 
 
-@pytest.mark.parametrize(('name', 'username', 'password', 'message'), (
-    ('', '', '', 'Name is required.'),
-    ('user', '', '', 'Username is required.'),
-    ('user', 'username', '', 'Password is required.'),
-    ('user', 'username', 'password', 'is taken.'),
-    ('user', 'username3', 'password', '')
-))
-def test_register_validate_input(client, name, username, password, message):
-    response = client.post('/auth/register', json={'name': name, 'username': username, 'password': password})
-    data = response.get_json() if response.get_json() is not None else {}
-    assert message in data.get('error', '')
+def test_register(auth):
+    num_users = User.query.count()
+    auth.register()
+
+    assert User.query.count() > num_users

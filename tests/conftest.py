@@ -4,10 +4,10 @@ import os
 import pytest
 import tempfile
 from flaskr import create_app
-from flaskr.db import get_db, init_db
+from flaskr.db import db, Task, User, init_data
 
-with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
-    _data_sql = f.read().decode('utf8')
+def parse_data(response):
+    return response.get_json() if response.get_json() is not None else {}
 
 
 @pytest.fixture
@@ -16,17 +16,24 @@ def app():
 
     app = create_app({
         'TESTING': True,
-        'DATABASE': db_path
+        'SQLALCHEMY_DATABASE_URI': 'sqlite:////{}'.format(db_path)
     })
 
     with app.app_context():
-        init_db()
-        get_db().executescript(_data_sql)
+        db.create_all()
+        init_data()
 
-    yield app
+        user1 = User(name='user', username='username', password='pbkdf2:sha256:260000$PMLqezAg2LqvlI9c$e3bb259297561bac7418481fd46b78590dc15e5e836d520535085f0966ac9155')
+        user2 = User(name='user2', username='username2', password='pbkdf2:sha256:260000$PMLqezAg2LqvlI9c$e3bb259297561bac7418481fd46b78590dc15e5e836d520535085f0966ac9155')
+        task = Task(user=user1, body='test title')
 
-    os.close(db_fd)
-    os.unlink(db_path)
+        db.session.add_all([user1, user2, task])
+        db.session.commit()
+
+        yield app
+
+        os.close(db_fd)
+        os.unlink(db_path)
 
 
 @pytest.fixture
@@ -39,17 +46,38 @@ def runner(app):
     return app.test_cli_runner()
 
 
+default_task = {
+    'user': 1,
+    'body': 'Test body',
+}
+
+default_auth = {
+    'username': 'username',
+    'password': 'password',
+}
+
+default_user = {
+    'name': 'John Doe',
+    'username': 'jdoe',
+    'password': 'pbkdf2:sha256:260000$PMLqezAg2LqvlI9c$e3bb259297561bac7418481fd46b78590dc15e5e836d520535085f0966ac9155'
+}
+
+
 class AuthActions(object):
     def __init__(self, client):
         self._client = client
 
-    def login(self, username='username', password='password'):
-        return self._client.post('/auth/login', json={'username': username, 'password': password})
+    def get_auth_header(self, user=default_auth):
+        response = self.login(data=user)
+        data = parse_data(response)
 
-    def get_auth_header(self, username='username', password='password'):
-        response = self.login(username, password)
-        data = response.get_json() if response.get_json() is not None else {}
         return {'Authorization': f'Bearer {data.get("token", "")}'}
+
+    def login(self, data=default_auth):
+        return self._client.post('/auth/login', json=data)
+
+    def register(self, data=default_user):
+        return self._client.post('/auth/register', json=data)
 
 
 @pytest.fixture
@@ -58,14 +86,20 @@ def auth(client):
 
 
 class TaskActions(object):
-    def __init__(self, auth, client):
-        self._auth = auth
+    def __init__(self, client, auth):
         self._client = client
+        self._auth = auth
 
-    def create_task(self, username='username', password='password', body='Test body'):
-        return self._client.post('/task/', json={'body': body}, headers=self._auth.get_auth_header(username, password))
+    def get(self, user=default_auth):
+        return self._client.get('/tasks/', headers=self._auth.get_auth_header(user=user))
+
+    def create(self, user=default_auth, data=default_task):
+        return self._client.post('/tasks/', headers=self._auth.get_auth_header(user=user), json=data)
+
+    def edit(self, task_id=1, user=default_auth, data={}):
+        return self._client.patch(f'/tasks/{task_id}', headers=self._auth.get_auth_header(user=user), json=data)
 
 
 @pytest.fixture
-def task(auth, client):
-    return TaskActions(auth, client)
+def task(client, auth):
+    return TaskActions(client, auth)
