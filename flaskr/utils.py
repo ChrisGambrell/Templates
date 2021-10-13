@@ -9,11 +9,20 @@ from flaskr.db import Task, User
 def exists(endpoint):
     @functools.wraps(endpoint)
     def wrapped_endpoint(**kwargs):
-        task = Task.query.filter_by(id=kwargs.get('task_id', '')).first()
+        if kwargs.get('task_id', None) is not None:
+            task = Task.query.filter_by(id=kwargs.get('task_id', '')).first()
 
-        if task is None:
-            return jsonify({'error': 'Task does not exist.'}), 404
-        return endpoint(fetched_task=task, **kwargs)
+            if task is None:
+                return jsonify({'error': 'Task does not exist.'}), 404
+            return endpoint(fetched_task=task, **kwargs)
+        elif kwargs.get('user_id', None) is not None:
+            user = User.query.filter_by(id=kwargs.get('user_id', '')).first()
+
+            if user is None:
+                return jsonify({'error': 'User does not exist.'}), 404
+            return endpoint(fetched_user=user, **kwargs)
+        else:
+            return endpoint(**kwargs)
     return wrapped_endpoint
 
 

@@ -121,6 +121,9 @@ class UserActions(object):
     def get(self, user=default_auth):
         return self._client.get('/user/', headers=self._auth.get_auth_header(user=user))
 
+    def get_by_id(self, user_id=1, user=default_auth):
+        return self._client.get(f'/user/{user_id}', headers=self._auth.get_auth_header(user=user))
+
     def create(self, data=default_user):
         return self._auth.register(data=data)
 

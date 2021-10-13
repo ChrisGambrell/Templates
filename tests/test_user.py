@@ -55,3 +55,25 @@ def test_delete_user_cascade(task, user):
     user.delete()
 
     assert Task.query.filter_by(user_id=new_user['id']).count() < num_tasks
+
+
+@pytest.mark.parametrize(('user_id', 'status', 'error'), (
+    (-1, 404, 'User does not exist.'),
+    (None, 200, '')
+))
+def test_get_user_by_id(user, user_id, status, error):
+    if user_id is not None:
+        response = user.get_by_id(user_id=user_id)
+        data = parse_data(response)
+
+        assert response.status_code == status
+        assert data.get('error', '') == error
+    else:
+        response = user.create()
+        new_user = parse_data(response)
+
+        response = user.get_by_id(user_id=new_user['id'])
+        fetched_user = parse_data(response)
+
+        for key in fetched_user.keys():
+            assert fetched_user[key] == new_user[key]

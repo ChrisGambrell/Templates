@@ -3,7 +3,7 @@
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
-from flaskr.utils import parse_data
+from flaskr.utils import exists, parse_data
 
 
 def create_app(test_config=None):
@@ -32,6 +32,7 @@ def create_app(test_config=None):
 
         @app.route('/secret')
         @login_required
+        @exists
         @parse_data
         def secret(authed_user, **kwargs):
             return jsonify({'hello': authed_user.name})
