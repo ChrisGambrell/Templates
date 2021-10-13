@@ -77,9 +77,9 @@ def test_delete_task(task):
 
 
 @pytest.mark.parametrize(('task_id', 'access_user', 'status', 'error'), (
-    (-1, {'username': 'username', 'password': 'password'}, 404, 'Task does not exist.'),
-    (None, {'username': 'username2', 'password': 'password'}, 401, 'Access denied.'),
-    (None, {'username': 'username', 'password': 'password'}, 200, '')
+    (-1, {'username': 'username', 'password': 'password'}, 404, {'task': ['task not found']}),
+    (None, {'username': 'username2', 'password': 'password'}, 401, {'auth': ['access denied']}),
+    (None, {'username': 'username', 'password': 'password'}, 200, {})
 ))
 def test_task_ownership(task, task_id, access_user, status, error):
     response = task.create()
@@ -89,4 +89,4 @@ def test_task_ownership(task, task_id, access_user, status, error):
     data = parse_data(response)
 
     assert response.status_code == status
-    assert data.get('error', '') == error
+    assert data.get('error', {}) == error

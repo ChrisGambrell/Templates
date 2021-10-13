@@ -58,8 +58,8 @@ def test_delete_user_cascade(task, user):
 
 
 @pytest.mark.parametrize(('user_id', 'status', 'error'), (
-    (-1, 404, 'User does not exist.'),
-    (None, 200, '')
+    (-1, 404, {'user': ['user not found']}),
+    (None, 200, {})
 ))
 def test_get_user_by_id(user, user_id, status, error):
     if user_id is not None:
@@ -67,7 +67,7 @@ def test_get_user_by_id(user, user_id, status, error):
         data = parse_data(response)
 
         assert response.status_code == status
-        assert data.get('error', '') == error
+        assert data.get('error', {}) == error
     else:
         response = user.create()
         new_user = parse_data(response)

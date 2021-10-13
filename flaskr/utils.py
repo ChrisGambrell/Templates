@@ -13,13 +13,13 @@ def exists(endpoint):
             task = Task.query.filter_by(id=kwargs.get('task_id', '')).first()
 
             if task is None:
-                return jsonify({'error': 'Task does not exist.'}), 404
+                return jsonify({'error': {'task': ['task not found']}}), 404
             return endpoint(fetched_task=task, **kwargs)
         elif kwargs.get('user_id', None) is not None:
             user = User.query.filter_by(id=kwargs.get('user_id', '')).first()
 
             if user is None:
-                return jsonify({'error': 'User does not exist.'}), 404
+                return jsonify({'error': {'user': ['user not found']}}), 404
             return endpoint(fetched_user=user, **kwargs)
         else:
             return endpoint(**kwargs)
@@ -33,22 +33,22 @@ def login_required(endpoint):
         if len(authorization.split('Bearer ')) > 1:
             token = authorization.split('Bearer ')[1]
         else:
-            return jsonify({'error': 'Missing token.'}), 400
+            return jsonify({'error': {'auth': ['missing token']}}), 400
 
         try:
             decoded_token = jwt.decode(token, 'secret', algorithms=['HS256'])
             decoded_user = User.query.filter_by(id=decoded_token.get('user_id', '')).first()
 
             if decoded_user is None:
-                return jsonify({'error': "User doesn't exist."}), 404
+                return jsonify({'error': {'user': ['user not found']}}), 404
             elif decoded_user.password != decoded_token.get('password', ''):
-                return jsonify({'error': 'Unauthorized.'}), 401
+                return jsonify({'error': {'auth': ['unauthorized']}}), 401
 
             return endpoint(authed_user=decoded_user, **kwargs)
         except jwt.exceptions.ExpiredSignatureError:
-            return jsonify({'error': 'Token expired.'}), 400
+            return jsonify({'error': {'auth': ['token expired']}}), 400
         except jwt.exceptions.DecodeError:
-            return jsonify({'error': 'Invalid token.'}), 400
+            return jsonify({'error': {'auth': ['invalid token']}}), 400
     return wrapped_endpoint
 
 
@@ -58,7 +58,7 @@ def owner(endpoint):
     @exists
     def wrapped_endpoint(authed_user, fetched_task, **kwargs):
         if fetched_task.user_id != authed_user.id:
-            return jsonify({'error': 'Access denied.'}), 401
+            return jsonify({'error': {'auth': ['access denied']}}), 401
 
         return endpoint(owned_task=fetched_task, **kwargs)
     return wrapped_endpoint
