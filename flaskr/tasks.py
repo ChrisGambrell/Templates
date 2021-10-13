@@ -3,7 +3,7 @@
 from cerberus import Validator
 from flask import Blueprint, jsonify
 from flaskr.db import db, Task, TaskSchema
-from flaskr.utils import login_required, owner, parse_data
+from flaskr.utils import exists, login_required, owner, parse_data
 
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 v = Validator(purge_unknown=True)
@@ -46,8 +46,14 @@ def create_task(authed_user, data, **kwargs):
     return jsonify(TaskSchema().dump(new_task))
 
 
-@bp.route('/<task_id>', methods=['PATCH'])
+@bp.route('/<task_id>', methods=['GET'])
 @login_required
+@exists
+def get_task_by_id(fetched_task, **kwargs):
+    return jsonify(TaskSchema().dump(fetched_task))
+
+
+@bp.route('/<task_id>', methods=['PATCH'])
 @owner
 @parse_data
 def edit_task(owned_task, data, **kwargs):
@@ -76,7 +82,6 @@ def edit_task(owned_task, data, **kwargs):
 
 
 @bp.route('/<task_id>', methods=['DELETE'])
-@login_required
 @owner
 def delete_task(owned_task, **kwargs):
     db.session.delete(owned_task)

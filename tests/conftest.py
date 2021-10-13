@@ -95,6 +95,9 @@ class TaskActions(object):
     def get(self, user=default_auth):
         return self._client.get('/tasks/', headers=self._auth.get_auth_header(user=user))
 
+    def get_by_id(self, task_id=1, user=default_auth):
+        return self._client.get(f'/tasks/{task_id}', headers=self._auth.get_auth_header(user=user))
+
     def create(self, user=default_auth, data=default_task):
         return self._client.post('/tasks/', headers=self._auth.get_auth_header(user=user), json=data)
 

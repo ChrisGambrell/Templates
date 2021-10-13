@@ -32,6 +32,17 @@ def test_create_task(task):
     assert Task.query.filter_by(user_id=1).count() > num_tasks
 
 
+def test_get_task_by_id(task):
+    response = task.create()
+    new_task = parse_data(response)
+
+    response = task.get_by_id(task_id=new_task['id'])
+    fetched_task = parse_data(response)
+
+    for key in fetched_task.keys():
+        assert fetched_task[key] == new_task[key]
+
+
 @pytest.mark.parametrize(('data', 'status', 'error'), (
     ({'body': '', 'completed': 'foobar'}, 400, {'body': ['empty values not allowed']}),
     ({'body': 'Editing task', 'completed': True}, 200, {})
