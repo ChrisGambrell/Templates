@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-import functools
 import jwt
 from datetime import datetime, timedelta
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from flaskr.db import db, User, UserSchema
 from flaskr.utils import parse_data
 from werkzeug.security import check_password_hash, generate_password_hash

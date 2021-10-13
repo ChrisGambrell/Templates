@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-import jwt
 import pytest
-from datetime import datetime
 from flaskr.db import User
 from tests.conftest import parse_data
 

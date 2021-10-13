@@ -6,6 +6,7 @@ import tempfile
 from flaskr import create_app
 from flaskr.db import db, Task, User, init_data
 
+
 def parse_data(response):
     return response.get_json() if response.get_json() is not None else {}
 

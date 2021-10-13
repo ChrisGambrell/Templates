@@ -2,7 +2,7 @@
 
 import pytest
 from flaskr.db import Task
-from tests.conftest import default_auth, parse_data
+from tests.conftest import parse_data
 
 
 def test_get_tasks(task):

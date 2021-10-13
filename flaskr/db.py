@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import click
-import sqlite3
 from datetime import datetime
-from flask import current_app, g
 from flask.cli import with_appcontext
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -56,7 +54,7 @@ def init_db():
     # Uncomment if you want the database to reset
     # each time the app is started
     # db.drop_all()
-    
+
     try:
         db.create_all()
         db.init_data()
@@ -69,6 +67,7 @@ def init_db():
 def init_db_command():
     init_db()
     click.echo('Initialized the database.')
+
 
 def init_app(app):
     db.init_app(app)

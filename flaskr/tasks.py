@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from flaskr.db import db, Task, TaskSchema
 from flaskr.utils import login_required, owner, parse_data
 
