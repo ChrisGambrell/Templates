@@ -13,37 +13,35 @@ def test_get_tasks(task):
     assert len(data) > 0
 
 
-@pytest.mark.parametrize(('body', 'status', 'error'), (
-    ('', 400, 'Body is required.'),
-    ('Test task', 200, '')
+@pytest.mark.parametrize(('data', 'status', 'error'), (
+    ({'body': '', 'completed': 'foobar'}, 400, {'body': ['empty values not allowed']}),
+    ({'body': 'Test task'}, 200, {})
 ))
-def test_validate_create_task_input(task, body, status, error):
-    response = task.create(data={'body': body})
+def test_validate_create_task_input(task, data, status, error):
+    response = task.create(data=data)
     data = parse_data(response)
 
     assert response.status_code == status
-    assert data.get('error', '') == error
+    assert data.get('error', {}) == error
 
 
 def test_create_task(task):
-    num_tasks = Task.query.count()
+    num_tasks = Task.query.filter_by(user_id=1).count()
     task.create()
 
-    assert Task.query.count() > num_tasks
+    assert Task.query.filter_by(user_id=1).count() > num_tasks
 
 
 @pytest.mark.parametrize(('data', 'status', 'error'), (
-    ({'body': '', 'completed': True}, 400, 'Body is required.',),
-    ({'body': 'Editing task', 'completed': 'True'}, 400, 'Completed must be a boolean.',),
-    ({'foo': 'bar'}, 400, 'foo is not an editable property.'),
-    ({'body': 'Editing task', 'completed': True}, 200, '')
+    ({'body': '', 'completed': 'foobar'}, 400, {'body': ['empty values not allowed']}),
+    ({'body': 'Editing task', 'completed': True}, 200, {})
 ))
 def test_validate_edit_task_input(task, data, status, error):
     response = task.edit(data=data)
     data = parse_data(response)
 
     assert response.status_code == status
-    assert data.get('error', '') == error
+    assert data.get('error', {}) == error
 
 
 def test_edit_task(task):
