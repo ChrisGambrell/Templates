@@ -73,3 +73,12 @@ def edit_task(owned_task, data, **kwargs):
     db.session.commit()
 
     return jsonify(TaskSchema().dump(owned_task))
+
+
+@bp.route('/<task_id>', methods=['DELETE'])
+@login_required
+@owner
+def delete_task(owned_task, **kwargs):
+    db.session.delete(owned_task)
+    db.session.commit()
+    return jsonify({})

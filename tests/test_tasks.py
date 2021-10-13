@@ -55,6 +55,16 @@ def test_edit_task(task):
         assert data[key] != new_task[key]
 
 
+def test_delete_task(task):
+    response = task.create()
+    new_task = parse_data(response)
+    num_tasks = Task.query.filter_by(user_id=new_task['user_id']).count()
+
+    response = task.delete(task_id=new_task['id'])
+
+    assert Task.query.filter_by(user_id=new_task['user_id']).count() < num_tasks
+
+
 @pytest.mark.parametrize(('task_id', 'access_user', 'status', 'error'), (
     (-1, {'username': 'username', 'password': 'password'}, 404, 'Task does not exist.'),
     (None, {'username': 'username2', 'password': 'password'}, 401, 'Access denied.'),
