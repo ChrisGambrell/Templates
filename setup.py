@@ -9,8 +9,13 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
+        'cerberus',
         'coverage',
         'flask',
+        'flask-cors',
+        'flask-marshmallow',
+        'flask-sqlalchemy',
+        'marshmallow-sqlalchemy',
         'pyjwt',
         'pytest'
     ]

@@ -1,19 +1,13 @@
 #!/usr/bin/env python3
 
-import pytest
-import sqlite3
-from flaskr.db import get_db
+from flaskr import create_app
+from flaskr.db import init_db
 
 
-def test_get_close_db(app):
+def test_init_db():
+    app = create_app()
     with app.app_context():
-        db = get_db()
-        assert db is get_db()
-
-    with pytest.raises(sqlite3.ProgrammingError) as e:
-        db.execute('SELECT 1')
-
-    assert 'closed' in str(e.value)
+        assert init_db() is None
 
 
 def test_init_db_command(runner, monkeypatch):
@@ -25,5 +19,6 @@ def test_init_db_command(runner, monkeypatch):
 
     monkeypatch.setattr('flaskr.db.init_db', fake_init_db)
     result = runner.invoke(args=['init-db'])
-    assert 'Initialized' in result.output
+
+    assert 'Initialized the database.\n' == result.output
     assert Recorder.called

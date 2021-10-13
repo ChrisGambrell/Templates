@@ -1,41 +1,75 @@
 #!/usr/bin/env python3
 
 import click
-import sqlite3
-from flask import current_app, g
+from datetime import datetime
 from flask.cli import with_appcontext
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+mb = Marshmallow()
 
 
-def get_db():
-    if 'db' not in g:
-        g.db = sqlite3.connect(current_app.config['DATABASE'], detect_types=sqlite3.PARSE_DECLTYPES)
-        g.db.row_factory = sqlite3.Row
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    tasks = db.relationship('Task', back_populates='user')
 
-    return g.db
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.relationship('User', back_populates='tasks')
+    body = db.Column(db.String, nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
-def close_db(e=None):
-    db = g.pop('db', None)
+class UserSchema(mb.SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        include_fk = True
+        include_relationships = True
 
-    if db is not None:
-        db.close()
+
+class TaskSchema(mb.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Task
+        include_fk = True
+        include_relationships = True
+
+
+def init_data():
+    # If any initial data is needed for the database,
+    # do it here.
+    # user = User(name='John Doe', username='jdoe', password='hashed_password')
+    # task = Task(user=user, body='Sample task', completed=True)
+    pass
 
 
 def init_db():
-    db = get_db()
+    # Uncomment if you want the database to reset
+    # each time the app is started
+    # db.drop_all()
 
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+    try:
+        db.create_all()
+        db.init_data()
+    except Exception:
+        pass
 
 
 @click.command('init-db')
 @with_appcontext
 def init_db_command():
-    """Clear the existing data and create new tables."""
     init_db()
     click.echo('Initialized the database.')
 
 
 def init_app(app):
-    app.teardown_appcontext(close_db)
+    db.init_app(app)
+    mb.init_app(app)
     app.cli.add_command(init_db_command)
