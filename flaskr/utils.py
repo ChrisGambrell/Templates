@@ -6,6 +6,17 @@ from flask import jsonify, request
 from flaskr.db import Task, User
 
 
+def exists(endpoint):
+    @functools.wraps(endpoint)
+    def wrapped_endpoint(**kwargs):
+        task = Task.query.filter_by(id=kwargs.get('task_id', '')).first()
+
+        if task is None:
+            return jsonify({'error': 'Task does not exist.'}), 404
+        return endpoint(fetched_task=task, **kwargs)
+    return wrapped_endpoint
+
+
 def login_required(endpoint):
     @functools.wraps(endpoint)
     def wrapped_endpoint(**kwargs):
@@ -34,15 +45,13 @@ def login_required(endpoint):
 
 def owner(endpoint):
     @functools.wraps(endpoint)
-    def wrapped_endpoint(**kwargs):
-        task = Task.query.filter_by(id=kwargs.get('task_id', '')).first()
-
-        if task is None:
-            return jsonify({'error': 'Task does not exist.'}), 404
-        elif task.user_id != kwargs['authed_user'].id:
+    @login_required
+    @exists
+    def wrapped_endpoint(authed_user, fetched_task, **kwargs):
+        if fetched_task.user_id != authed_user.id:
             return jsonify({'error': 'Access denied.'}), 401
 
-        return endpoint(owned_task=task, **kwargs)
+        return endpoint(owned_task=fetched_task, **kwargs)
     return wrapped_endpoint
 
 
