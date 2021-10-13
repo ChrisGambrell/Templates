@@ -100,6 +100,9 @@ class TaskActions(object):
     def edit(self, task_id=1, user=default_auth, data={}):
         return self._client.patch(f'/tasks/{task_id}', headers=self._auth.get_auth_header(user=user), json=data)
 
+    def delete(self, task_id=1, user=default_auth):
+        return self._client.delete(f'/tasks/{task_id}', headers=self._auth.get_auth_header(user=user))
+
 
 @pytest.fixture
 def task(client, auth):
