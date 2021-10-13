@@ -71,7 +71,7 @@ def register(data, **kwargs):
         return jsonify({'error': v.errors}), 400
     data = v.normalized(data, schema)
 
-    if User.query.filter_by(username=data['username']).first() is not None:
+    if User.query.filter_by(username=data['username']).count() > 0:
         return jsonify({'error': {'username': ['username is taken']}}), 401
 
     new_user = User(name=data['name'], username=data['username'], password=generate_password_hash(data['password']))
