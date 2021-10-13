@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import jwt
+from cerberus import Validator
 from datetime import datetime, timedelta
 from flask import Blueprint, jsonify
 from flaskr.db import db, User, UserSchema
@@ -8,33 +9,35 @@ from flaskr.utils import parse_data
 from werkzeug.security import check_password_hash, generate_password_hash
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+v = Validator(purge_unknown=True, require_all=True)
 
 
 @bp.route('/login', methods=['POST'])
 @parse_data
 def login(data, **kwargs):
-    username = data.get('username', None)
-    password = data.get('password', None)
+    schema = {
+        'username': {
+            'type': 'string',
+            'coerce': str,
+            'empty': False
+        },
+        'password': {
+            'type': 'string',
+            'coerce': str,
+            'empty': False
+        }
+    }
 
-    error = None
+    if not v.validate(data, schema):
+        return jsonify({'error': v.errors}), 400
+    data = v.normalized(data, schema)
 
-    if not username:
-        error = 'Username is required.'
-    elif not password:
-        error = 'Password is required.'
-
-    if error:
-        return jsonify({'error': error}), 400
-
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(username=data['username']).first()
 
     if user is None:
-        error = 'Username is incorrect.'
-    elif not check_password_hash(user.password, password):
-        error = 'Password is incorrect.'
-
-    if error:
-        return jsonify({'error': error}), 401
+        return jsonify({'error': {'username': ['username is incorrect']}}), 401
+    elif not check_password_hash(user.password, data['password']):
+        return jsonify({'error': {'password': ['password is incorrect.']}}), 401
 
     return jsonify({'token': jwt.encode({
         'user_id': user.id,
@@ -46,26 +49,32 @@ def login(data, **kwargs):
 @bp.route('/register', methods=['POST'])
 @parse_data
 def register(data, **kwargs):
-    name = data.get('name', None)
-    username = data.get('username', None)
-    password = data.get('password', None)
+    schema = {
+        'name': {
+            'type': 'string',
+            'coerce': str,
+            'empty': False
+        },
+        'username': {
+            'type': 'string',
+            'coerce': str,
+            'empty': False
+        },
+        'password': {
+            'type': 'string',
+            'coerce': str,
+            'empty': False
+        }
+    }
 
-    error = None
+    if not v.validate(data, schema):
+        return jsonify({'error': v.errors}), 400
+    data = v.normalized(data, schema)
 
-    if not name:
-        error = 'Name is required.'
-    elif not username:
-        error = 'Username is required.'
-    elif not password:
-        error = 'Password is required.'
+    if User.query.filter_by(username=data['username']).first() is not None:
+        return jsonify({'error': {'username': ['username is taken']}}), 401
 
-    if error:
-        return jsonify({'error': error}), 400
-
-    if User.query.filter_by(username=username).first() is not None:
-        return jsonify({'error': 'Username is taken.'}), 401
-
-    new_user = User(name=name, username=username, password=generate_password_hash(password))
+    new_user = User(name=data['name'], username=data['username'], password=generate_password_hash(data['password']))
     db.session.add(new_user)
     db.session.commit()
 
