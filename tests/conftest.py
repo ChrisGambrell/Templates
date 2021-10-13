@@ -53,6 +53,7 @@ default_task = {
 }
 
 default_auth = {
+    'name': 'user',
     'username': 'username',
     'password': 'password',
 }
@@ -60,7 +61,7 @@ default_auth = {
 default_user = {
     'name': 'John Doe',
     'username': 'jdoe',
-    'password': 'pbkdf2:sha256:260000$PMLqezAg2LqvlI9c$e3bb259297561bac7418481fd46b78590dc15e5e836d520535085f0966ac9155'
+    'password': 'password'
 }
 
 
@@ -107,3 +108,26 @@ class TaskActions(object):
 @pytest.fixture
 def task(client, auth):
     return TaskActions(client, auth)
+
+
+class UserActions(object):
+    def __init__(self, client, auth):
+        self._client = client
+        self._auth = auth
+
+    def get(self, user=default_auth):
+        return self._client.get('/user/', headers=self._auth.get_auth_header(user=user))
+
+    def create(self, data=default_user):
+        return self._auth.register(data=data)
+
+    def edit(self, user=default_user, data={}):
+        return self._client.patch('/user/', headers=self._auth.get_auth_header(user=user), json=data)
+
+    def delete(self, user=default_user):
+        return self._client.delete('/user/', headers=self._auth.get_auth_header(user=user))
+
+
+@pytest.fixture
+def user(client, auth):
+    return UserActions(client, auth)
