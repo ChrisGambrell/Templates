@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+from cerberus import Validator
 from flask import Blueprint, jsonify
 from flaskr.db import db, Task, TaskSchema
 from flaskr.utils import login_required, owner, parse_data
 
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
+v = Validator(purge_unknown=True)
 
 
 @bp.route('/', methods=['GET'])
@@ -18,17 +20,26 @@ def get_tasks(authed_user, **kwargs):
 @login_required
 @parse_data
 def create_task(authed_user, data, **kwargs):
-    body = data.get('body', None)
+    schema = {
+        'body': {
+            'type': 'string',
+            'coerce': str,
+            'empty': False,
+            'required': True,
+        },
+        'completed': {
+            'type': 'boolean',
+            'coerce': bool,
+            'empty': False,
+            'default': False
+        }
+    }
 
-    error = None
+    if not v.validate(data, schema):
+        return jsonify({'error': v.errors}), 400
+    data = v.normalized(data, schema)
 
-    if not body:
-        error = 'Body is required.'
-
-    if error:
-        return jsonify({"error": error}), 400
-
-    new_task = Task(user=authed_user, body=body)
+    new_task = Task(user=authed_user, body=data['body'], completed=data['completed'])
     db.session.add(new_task)
     db.session.commit()
 
@@ -40,15 +51,25 @@ def create_task(authed_user, data, **kwargs):
 @owner
 @parse_data
 def edit_task(owned_task, data, **kwargs):
+    schema = {
+        'body': {
+            'type': 'string',
+            'coerce': str,
+            'empty': False,
+        },
+        'completed': {
+            'type': 'boolean',
+            'coerce': bool,
+            'empty': False,
+        }
+    }
+
+    if not v.validate(data, schema):
+        return jsonify({'error': v.errors}), 400
+    data = v.normalized(data, schema)
+
     for key in data.keys():
-        if key in ['body', 'completed']:
-            if key == 'body' and data[key] == '':
-                return jsonify({'error': 'Body is required.'}), 400
-            elif key == 'completed' and type(data[key]) is not bool:
-                return jsonify({'error': 'Completed must be a boolean.'}), 400
-            setattr(owned_task, key, data[key])
-        else:
-            return jsonify({'error': f'{key} is not an editable property.'}), 400
+        setattr(owned_task, key, data[key])
     db.session.commit()
 
     return jsonify(TaskSchema().dump(owned_task))
