@@ -18,6 +18,7 @@ setup(
         'flask-sqlalchemy',
         'marshmallow-sqlalchemy',
         'pyjwt',
-        'pytest'
+        'pytest',
+        'python-dotenv'
     ]
 )
