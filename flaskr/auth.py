@@ -3,6 +3,7 @@
 import jwt
 from cerberus import Validator
 from datetime import datetime, timedelta
+from dotenv.main import dotenv_values
 from flask import Blueprint, jsonify
 from flaskr.db import db, User, UserSchema
 from flaskr.utils import parse_data
@@ -43,7 +44,7 @@ def login(data, **kwargs):
         'user_id': user.id,
         'password': user.password,
         'exp': (datetime.now() + timedelta(days=30)).timestamp()
-    }, 'secret', algorithm='HS256')})
+    }, dotenv_values().get('AUTH_SECRET', ''), algorithm='HS256')})
 
 
 @bp.route('/register', methods=['POST'])
