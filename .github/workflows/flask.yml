@@ -33,6 +33,7 @@ jobs:
       run: |
         echo "Hello, world!"
         echo "$AUTH_SECRET"
+        python -c "import os; print(os.getenv('AUTH_SECRET'))"
     - name: Test with coverage & pytest
       run: |
         ./test
