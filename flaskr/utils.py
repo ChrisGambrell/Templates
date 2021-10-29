@@ -37,7 +37,7 @@ def login_required(endpoint):
             return jsonify({'error': {'auth': ['missing token']}}), 400
 
         try:
-            decoded_token = jwt.decode(token, dotenv_values().get('AUTH_SECRET', ''), algorithms=['HS256'])
+            decoded_token = jwt.decode(token, dotenv_values().get('AUTH_SECRET'), algorithms=['HS256'])
             decoded_user = User.query.filter_by(id=decoded_token.get('user_id', '')).first()
 
             if decoded_user is None:
