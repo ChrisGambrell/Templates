@@ -32,3 +32,4 @@ jobs:
     - name: Test with coverage & pytest
       run: |
         ./test
+        echo $AUTH_SECRET
