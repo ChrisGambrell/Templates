@@ -16,6 +16,7 @@ setup(
         'flask-cors',
         'flask-marshmallow',
         'flask-sqlalchemy',
+        'gunicorn',
         'marshmallow-sqlalchemy',
         'pyjwt',
         'pytest',
