@@ -3,7 +3,7 @@
 from cerberus import Validator
 from flask import Blueprint, jsonify
 from flaskr.db import db, User, UserSchema
-from flaskr.utils import exists, login_required, parse_data
+from flaskr.utils import exists_user, login_required, parse_data
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 v = Validator(purge_unknown=True)
@@ -55,6 +55,6 @@ def delete_user(authed_user, **kwargs):
 
 @bp.route('/<user_id>', methods=['GET'])
 @login_required
-@exists
+@exists_user
 def get_user_by_id(fetched_user, **kwargs):
     return jsonify(UserSchema().dump(fetched_user))

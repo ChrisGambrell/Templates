@@ -11,6 +11,7 @@ setup(
     install_requires=[
         'cerberus',
         'coverage',
+        'flake8',
         'flask',
         'flask-cors',
         'flask-marshmallow',

@@ -6,23 +6,23 @@ from flask import jsonify, request
 from flaskr.db import Task, User
 
 
-def exists(endpoint):
+def exists_task(endpoint):
     @functools.wraps(endpoint)
     def wrapped_endpoint(**kwargs):
-        if kwargs.get('task_id', None) is not None:
-            task = Task.query.filter_by(id=kwargs.get('task_id', '')).first()
+        task = Task.query.filter_by(id=kwargs.get('task_id', '')).first()
+        if task is None:
+            return jsonify({'error': {'task': ['task not found']}}), 404
+        return endpoint(fetched_task=task, **kwargs)
+    return wrapped_endpoint
 
-            if task is None:
-                return jsonify({'error': {'task': ['task not found']}}), 404
-            return endpoint(fetched_task=task, **kwargs)
-        elif kwargs.get('user_id', None) is not None:
-            user = User.query.filter_by(id=kwargs.get('user_id', '')).first()
 
-            if user is None:
-                return jsonify({'error': {'user': ['user not found']}}), 404
-            return endpoint(fetched_user=user, **kwargs)
-        else:
-            return endpoint(**kwargs)
+def exists_user(endpoint):
+    @functools.wraps(endpoint)
+    def wrapped_endpoint(**kwargs):
+        user = User.query.filter_by(id=kwargs.get('user_id', '')).first()
+        if user is None:
+            return jsonify({'error': {'user': ['user not found']}}), 404
+        return endpoint(fetched_user=user, **kwargs)
     return wrapped_endpoint
 
 
@@ -55,7 +55,7 @@ def login_required(endpoint):
 def owner(endpoint):
     @functools.wraps(endpoint)
     @login_required
-    @exists
+    @exists_task
     def wrapped_endpoint(authed_user, fetched_task, **kwargs):
         if fetched_task.user_id != authed_user.id:
             return jsonify({'error': {'auth': ['access denied']}}), 401

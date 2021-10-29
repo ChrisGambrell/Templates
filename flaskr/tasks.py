@@ -3,7 +3,7 @@
 from cerberus import Validator
 from flask import Blueprint, jsonify
 from flaskr.db import db, Task, TaskSchema
-from flaskr.utils import exists, login_required, owner, parse_data
+from flaskr.utils import exists_task, login_required, owner, parse_data
 
 bp = Blueprint('tasks', __name__, url_prefix='/tasks')
 v = Validator(purge_unknown=True)
@@ -48,7 +48,7 @@ def create_task(authed_user, data, **kwargs):
 
 @bp.route('/<task_id>', methods=['GET'])
 @login_required
-@exists
+@exists_task
 def get_task_by_id(fetched_task, **kwargs):
     return jsonify(TaskSchema().dump(fetched_task))
 

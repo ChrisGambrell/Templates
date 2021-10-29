@@ -72,4 +72,5 @@ def init_db_command():
 def init_app(app):
     db.init_app(app)
     mb.init_app(app)
+    init_db()
     app.cli.add_command(init_db_command)
