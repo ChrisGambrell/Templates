@@ -32,4 +32,6 @@ jobs:
     - name: Test with coverage & pytest
       run: |
         ./test
-        echo $AUTH_SECRET
+    - name: Testing env vars
+      run: |
+        echo "Hello, world!"
