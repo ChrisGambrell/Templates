@@ -5,7 +5,6 @@ import pytest
 import tempfile
 from flaskr import create_app
 from flaskr.db import db, Task, User, init_data
-from werkzeug.security import generate_password_hash
 
 
 def parse_data(response):
