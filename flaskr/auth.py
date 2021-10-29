@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import jwt
+import os
 from cerberus import Validator
 from datetime import datetime, timedelta
 from dotenv.main import dotenv_values
@@ -44,7 +45,7 @@ def login(data, **kwargs):
         'user_id': user.id,
         'password': user.password,
         'exp': (datetime.now() + timedelta(days=30)).timestamp()
-    }, dotenv_values().get('AUTH_SECRET'), algorithm='HS256')})
+    }, os.getenv('AUTH_SECRET', dotenv_values().get('AUTH_SECRET')), algorithm='HS256')})
 
 
 @bp.route('/register', methods=['POST'])
