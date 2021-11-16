@@ -29,6 +29,5 @@ setup(
         'pyjwt',
         'pytest',
         'python-dotenv',
-        'wemake-python-styleguide',
     ],
 )
