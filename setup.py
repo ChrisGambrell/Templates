@@ -12,7 +12,11 @@ setup(
         'cerberus',
         'coverage',
         'flake8',
+        'flake8-bandit',
         'flake8-bugbear',
+        'flake8-builtins',
+        'flake8-eradicate',
+        'flake8-pytest-style',
         'flask',
         'flask-cors',
         'flask-marshmallow',
@@ -21,6 +25,7 @@ setup(
         'marshmallow-sqlalchemy',
         'pyjwt',
         'pytest',
-        'python-dotenv'
-    ]
+        'python-dotenv',
+        'wemake-python-styleguide',
+    ],
 )
