@@ -11,13 +11,13 @@ def parse_data(response):
     return response.get_json() if response.get_json() is not None else {}
 
 
-@pytest.fixture
+@pytest.fixture()
 def app():
     db_fd, db_path = tempfile.mkstemp()
 
     app = create_app({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'sqlite:////{}'.format(db_path)
+        'SQLALCHEMY_DATABASE_URI': 'sqlite:////{}'.format(db_path),
     })
 
     with app.app_context():
@@ -37,12 +37,12 @@ def app():
         os.unlink(db_path)
 
 
-@pytest.fixture
+@pytest.fixture()
 def client(app):
     return app.test_client()
 
 
-@pytest.fixture
+@pytest.fixture()
 def runner(app):
     return app.test_cli_runner()
 
@@ -61,7 +61,7 @@ default_auth = {
 default_user = {
     'name': 'John Doe',
     'username': 'jdoe',
-    'password': 'password'
+    'password': 'password',
 }
 
 
@@ -82,7 +82,7 @@ class AuthActions(object):
         return self._client.post('/auth/register', json=data)
 
 
-@pytest.fixture
+@pytest.fixture()
 def auth(client):
     return AuthActions(client)
 
@@ -108,7 +108,7 @@ class TaskActions(object):
         return self._client.delete(f'/tasks/{task_id}', headers=self._auth.get_auth_header(user=user))
 
 
-@pytest.fixture
+@pytest.fixture()
 def task(client, auth):
     return TaskActions(client, auth)
 
@@ -134,6 +134,6 @@ class UserActions(object):
         return self._client.delete('/user/', headers=self._auth.get_auth_header(user=user))
 
 
-@pytest.fixture
+@pytest.fixture()
 def user(client, auth):
     return UserActions(client, auth)
