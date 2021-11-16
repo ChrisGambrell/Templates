@@ -29,7 +29,7 @@ def edit_user(authed_user, data, **kwargs):
             'type': 'string',
             'coerce': str,
             'empty': False,
-        }
+        },
     }
 
     if not v.validate(data, schema):

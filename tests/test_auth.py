@@ -9,7 +9,7 @@ from tests.conftest import parse_data
     ('', '', 400, {'username': ['empty values not allowed'], 'password': ['empty values not allowed']}),
     ('foobar', 'password', 401, {'username': ['username is incorrect']}),
     ('username', 'foobar', 401, {'password': ['password is incorrect.']}),
-    ('username', 'password', 200, {})
+    ('username', 'password', 200, {}),
 ))
 def test_validate_login_input(auth, username, password, status, error):
     response = auth.login(data={'username': username, 'password': password})
@@ -22,7 +22,7 @@ def test_validate_login_input(auth, username, password, status, error):
 @pytest.mark.parametrize(('name', 'username', 'password', 'status', 'error'), (
     ('', '', '', 400, {'name': ['empty values not allowed'], 'username': ['empty values not allowed'], 'password': ['empty values not allowed']}),
     ('John Doe', 'username', 'password', 401, {'username': ['username is taken']}),
-    ('John Doe', 'jdoe', 'password', 200, {})
+    ('John Doe', 'jdoe', 'password', 200, {}),
 ))
 def test_validate_register_input(auth, name, username, password, status, error):
     response = auth.register(data={'name': name, 'username': username, 'password': password})

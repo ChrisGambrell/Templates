@@ -31,8 +31,8 @@ def create_task(authed_user, data, **kwargs):
             'type': 'boolean',
             'coerce': bool,
             'empty': False,
-            'default': False
-        }
+            'default': False,
+        },
     }
 
     if not v.validate(data, schema):
@@ -67,7 +67,7 @@ def edit_task(owned_task, data, **kwargs):
             'type': 'boolean',
             'coerce': bool,
             'empty': False,
-        }
+        },
     }
 
     if not v.validate(data, schema):

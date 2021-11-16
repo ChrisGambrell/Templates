@@ -16,7 +16,7 @@ def test_get_user(user):
 @pytest.mark.parametrize(('data', 'status', 'error'), (
     ({'name': '', 'username': ''}, 400, {'name': ['empty values not allowed'], 'username': ['empty values not allowed']}),
     ({'name': 'Updating my name', 'username': 'username'}, 401, {'username': ['username is taken']}),
-    ({'name': 'Updating my name', 'username': 'new_username'}, 200, {})
+    ({'name': 'Updating my name', 'username': 'new_username'}, 200, {}),
 ))
 def test_validate_edit_user_input(user, data, status, error):
     user.create()
@@ -59,7 +59,7 @@ def test_delete_user_cascade(task, user):
 
 @pytest.mark.parametrize(('user_id', 'status', 'error'), (
     (-1, 404, {'user': ['user not found']}),
-    (None, 200, {})
+    (None, 200, {}),
 ))
 def test_get_user_by_id(user, user_id, status, error):
     if user_id is not None:

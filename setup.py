@@ -15,6 +15,7 @@ setup(
         'flake8-bandit',
         'flake8-bugbear',
         'flake8-builtins',
+        'flake8-commas',
         'flake8-comprehensions',
         'flake8-docstrings',
         'flake8-eradicate',

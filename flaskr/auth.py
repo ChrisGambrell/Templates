@@ -21,13 +21,13 @@ def login(data, **kwargs):
         'username': {
             'type': 'string',
             'coerce': str,
-            'empty': False
+            'empty': False,
         },
         'password': {
             'type': 'string',
             'coerce': str,
-            'empty': False
-        }
+            'empty': False,
+        },
     }
 
     if not v.validate(data, schema):
@@ -44,7 +44,7 @@ def login(data, **kwargs):
     return jsonify({'token': jwt.encode({
         'user_id': user.id,
         'password': user.password,
-        'exp': (datetime.now() + timedelta(days=30)).timestamp()
+        'exp': (datetime.now() + timedelta(days=30)).timestamp(),
     }, os.getenv('AUTH_SECRET', dotenv_values().get('AUTH_SECRET')), algorithm='HS256')})
 
 
@@ -55,18 +55,18 @@ def register(data, **kwargs):
         'name': {
             'type': 'string',
             'coerce': str,
-            'empty': False
+            'empty': False,
         },
         'username': {
             'type': 'string',
             'coerce': str,
-            'empty': False
+            'empty': False,
         },
         'password': {
             'type': 'string',
             'coerce': str,
-            'empty': False
-        }
+            'empty': False,
+        },
     }
 
     if not v.validate(data, schema):

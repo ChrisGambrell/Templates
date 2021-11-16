@@ -15,7 +15,7 @@ def test_get_tasks(task):
 
 @pytest.mark.parametrize(('data', 'status', 'error'), (
     ({'body': '', 'completed': 'foobar'}, 400, {'body': ['empty values not allowed']}),
-    ({'body': 'Test task'}, 200, {})
+    ({'body': 'Test task'}, 200, {}),
 ))
 def test_validate_create_task_input(task, data, status, error):
     response = task.create(data=data)
@@ -45,7 +45,7 @@ def test_get_task_by_id(task):
 
 @pytest.mark.parametrize(('data', 'status', 'error'), (
     ({'body': '', 'completed': 'foobar'}, 400, {'body': ['empty values not allowed']}),
-    ({'body': 'Editing task', 'completed': True}, 200, {})
+    ({'body': 'Editing task', 'completed': True}, 200, {}),
 ))
 def test_validate_edit_task_input(task, data, status, error):
     response = task.edit(data=data)
@@ -79,7 +79,7 @@ def test_delete_task(task):
 @pytest.mark.parametrize(('task_id', 'access_user', 'status', 'error'), (
     (-1, {'username': 'username', 'password': 'password'}, 404, {'task': ['task not found']}),
     (None, {'username': 'username2', 'password': 'password'}, 401, {'auth': ['access denied']}),
-    (None, {'username': 'username', 'password': 'password'}, 200, {})
+    (None, {'username': 'username', 'password': 'password'}, 200, {}),
 ))
 def test_task_ownership(task, task_id, access_user, status, error):
     response = task.create()
