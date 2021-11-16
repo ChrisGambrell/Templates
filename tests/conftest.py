@@ -4,7 +4,7 @@ import os
 import pytest
 import tempfile
 from flaskr import create_app
-from flaskr.db import db, Task, User, init_data
+from flaskr.db import Task, User, db, init_data
 
 
 def parse_data(response):
@@ -101,7 +101,7 @@ class TaskActions(object):
     def create(self, user=default_auth, data=default_task):
         return self._client.post('/tasks/', headers=self._auth.get_auth_header(user=user), json=data)
 
-    def edit(self, task_id=1, user=default_auth, data={}):
+    def edit(self, task_id=1, user=default_auth, data=None):
         return self._client.patch(f'/tasks/{task_id}', headers=self._auth.get_auth_header(user=user), json=data)
 
     def delete(self, task_id=1, user=default_auth):
@@ -127,7 +127,7 @@ class UserActions(object):
     def create(self, data=default_user):
         return self._auth.register(data=data)
 
-    def edit(self, user=default_user, data={}):
+    def edit(self, user=default_user, data=None):
         return self._client.patch('/user/', headers=self._auth.get_auth_header(user=user), json=data)
 
     def delete(self, user=default_user):

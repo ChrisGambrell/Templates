@@ -12,6 +12,7 @@ setup(
         'cerberus',
         'coverage',
         'flake8',
+        'flake8-bugbear',
         'flask',
         'flask-cors',
         'flask-marshmallow',

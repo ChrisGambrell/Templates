@@ -11,7 +11,7 @@ mb = Marshmallow()
 
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)    # noqa: A003
     name = db.Column(db.String, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
@@ -19,7 +19,7 @@ class User(db.Model):
 
 
 class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)    # noqa: A003
     user = db.relationship('User', back_populates='tasks')
     body = db.Column(db.String, nullable=False)
     completed = db.Column(db.Boolean, default=False)
