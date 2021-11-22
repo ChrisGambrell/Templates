@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Test to make sure env vars are refreshing
 
 import os
 from flask import Flask, jsonify
