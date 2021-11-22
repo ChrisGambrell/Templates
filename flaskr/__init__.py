@@ -8,7 +8,7 @@ from flaskr.utils import parse_data
 
 def create_app(test_config=None):
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////{}'.format(os.path.join(app.instance_path, 'flaskr.sqlite'))
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:////{}'.format(os.path.join(app.instance_path, 'flaskr.sqlite'))).replace('postgres://', 'postgresql://')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     CORS(app)
 

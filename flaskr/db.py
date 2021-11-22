@@ -59,7 +59,7 @@ def init_db():
         db.create_all()
         db.init_data()
     except Exception:
-        print('There was an issue creating all database tables. Maybe they are already there?')
+        pass
 
 
 @click.command('init-db')
