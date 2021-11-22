@@ -40,6 +40,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Refresh secrets
+      run: |
+        printf 'AUTH_SECRET=' > .env
+        python -c 'import secrets; print(secrets.token_hex())' >> .env
     - uses: akhileshns/heroku-deploy@v3.12.12
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
