@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# Example for db retention
 
 import os
 from flask import Flask, jsonify
