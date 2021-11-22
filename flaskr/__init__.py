@@ -20,10 +20,10 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import db
-    db.init_app(app)
-
     with app.app_context():
+        from . import db
+        db.init_app(app)
+
         from flaskr.utils import login_required
 
         @app.route('/hello')
