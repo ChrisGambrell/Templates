@@ -24,12 +24,12 @@ setup(
         'flask-cors',
         'flask-marshmallow',
         'flask-sqlalchemy',
-        'gunicorn',
         'marshmallow-sqlalchemy',
         'pep8-naming',
         'psycopg2',
         'pyjwt',
         'pytest',
         'python-dotenv',
+        'waitress',
     ],
 )

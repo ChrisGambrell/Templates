@@ -1,1 +1,1 @@
-web gunicorn 'flaskr:create_app()'
+waitress-serve --call 'flaskr:create_app'
