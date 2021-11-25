@@ -45,9 +45,10 @@ class TaskSchema(mb.SQLAlchemyAutoSchema):
 def init_data():
     # If any initial data is needed for the database,
     # do it here.
-    # user = User(name='John Doe', username='jdoe', password='hashed_password')
-    # task = Task(user=user, body='Sample task', completed=True)
-    pass
+    user = User(name='John Doe', username='jdoe', password='hashed_password')
+    task = Task(user=user, body='Sample task', completed=True)
+
+    db.session.add_all([user, task])
 
 
 def init_db():
