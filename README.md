@@ -42,12 +42,6 @@ flask init-db
 flask run
 ```
 
-There is a default user to log in as:
-
-`username: 'jdoe'`
-
-`password: 'hashed_password'`
-
 ## Testing
 
 ```
