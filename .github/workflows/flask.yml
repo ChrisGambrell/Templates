@@ -24,14 +24,14 @@ jobs:
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --statistics
+        ./Tools/lib/lint
     - name: Refresh secrets
       run: |
         printf 'AUTH_SECRET=' > .env
         python -c 'import secrets; print(secrets.token_hex())' >> .env
     - name: Test with coverage & pytest
       run: |
-        ./test
+        ./Tools/lib/test
 
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

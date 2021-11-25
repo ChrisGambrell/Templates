@@ -31,25 +31,26 @@ https://github.com/ChrisGambrell/flask_template.git
 
 Project is installable using `pip`
 
-`pip install -e .`
+```
+pip install -e .
+```
+
+Add the necessary directories to your `PATH`:
+
+```
+Tools/Scripts
+```
 
 ## Running
 
 ```
-export FLASK_APP=flaskr
-
-flask init-db
-flask run
+Tools/Scripts/run
 ```
 
 ## Testing
 
 ```
-export FLASK_APP=flaskr
-
-coverage run -m pytest
-coverage report --fail-under=100
-coverage html --fail-under=100
+Tools/Scripts/test
 ```
 
 ## API Reference
