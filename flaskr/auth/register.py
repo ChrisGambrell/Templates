@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
-from cerberus import Validator
 from flask import jsonify
-from flaskr.auth import bp
+from flaskr.auth import bp, v
 from flaskr.db import db, User, UserSchema
 from flaskr.utils import parse_data
 from werkzeug.security import generate_password_hash
-
-v = Validator(purge_unknown=True, require_all=True)
 
 
 @bp.route('/register', methods=['POST'])

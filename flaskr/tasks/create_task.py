@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 
-from cerberus import Validator
 from flask import jsonify
 from flaskr.db import db, Task, TaskSchema
-from flaskr.tasks import bp
+from flaskr.tasks import bp, v
 from flaskr.utils import login_required, parse_data
-
-v = Validator(purge_unknown=True)
 
 
 @bp.route('/', methods=['POST'])

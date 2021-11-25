@@ -2,16 +2,13 @@
 
 import jwt
 import os
-from cerberus import Validator
 from datetime import datetime, timedelta
 from dotenv.main import dotenv_values
 from flask import jsonify
-from flaskr.auth import bp
+from flaskr.auth import bp, v
 from flaskr.db import User
 from flaskr.utils import parse_data
 from werkzeug.security import check_password_hash
-
-v = Validator(purge_unknown=True, require_all=True)
 
 
 @bp.route('/login', methods=['POST'])
