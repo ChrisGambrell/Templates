@@ -23,9 +23,7 @@ def create_app(test_config=None):
     with app.app_context():
         from . import db
         db.init_app(app)
-
-        if test_config is None:
-            db.init_data()
+        db.init_data()
 
         from flaskr.utils import login_required
 
