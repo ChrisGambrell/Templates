@@ -24,6 +24,9 @@ def create_app(test_config=None):
         from . import db
         db.init_app(app)
 
+        if test_config is not None:
+            db.init_data()
+
         from flaskr.utils import login_required
 
         @app.route('/hello')

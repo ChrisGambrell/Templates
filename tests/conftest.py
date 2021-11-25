@@ -4,7 +4,7 @@ import os
 import pytest
 import tempfile
 from flaskr import create_app
-from flaskr.db import Task, User, db, init_data
+from flaskr.db import Task, User, db
 
 
 def parse_data(response):
@@ -22,7 +22,6 @@ def app():
 
     with app.app_context():
         db.create_all()
-        init_data()
 
         user1 = User(name='user', username='username', password='pbkdf2:sha256:260000$PMLqezAg2LqvlI9c$e3bb259297561bac7418481fd46b78590dc15e5e836d520535085f0966ac9155')
         user2 = User(name='user2', username='username2', password='pbkdf2:sha256:260000$PMLqezAg2LqvlI9c$e3bb259297561bac7418481fd46b78590dc15e5e836d520535085f0966ac9155')
