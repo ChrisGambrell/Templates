@@ -44,14 +44,23 @@ Tools/Scripts
 ## Running
 
 ```
-Tools/Scripts/run
+flaskr run
 ```
 
 ## Testing
 
 ```
-Tools/Scripts/test
+flaskr test
 ```
+
+## Contribute
+
+1. Create new branch & pull request
+2. Run `flaskr check-style` to make sure style matches guidelines
+3. Run `flaskr test` to make sure there is 100% coverage
+4. Push to the pull request
+5. Request review
+6. Merge into main after review approval
 
 ## API Reference
 

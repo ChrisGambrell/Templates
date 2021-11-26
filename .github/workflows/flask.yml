@@ -24,7 +24,7 @@ jobs:
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        ./Tools/lib/lint
+        ./Tools/lib/check-style
     - name: Refresh secrets
       run: |
         printf 'AUTH_SECRET=' > .env
