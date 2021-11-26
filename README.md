@@ -24,7 +24,7 @@ git@github.com:ChrisGambrell/flask_template.git
 or
 
 ```
-https://github.com/ChrisGambrell/flask_template.git
+git clone https://github.com/ChrisGambrell/flask_template.git ./flask_template
 ```
 
 ## Installation
