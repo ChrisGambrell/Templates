@@ -18,7 +18,7 @@ Sample boilerplate flask project
 Run the following command to clone the flask_template Git repository
 
 ```
-git@github.com:ChrisGambrell/flask_template.git
+git clone git@github.com:ChrisGambrell/flask_template.git ./flask_template
 ```
 
 or
