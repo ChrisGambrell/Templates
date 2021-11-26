@@ -7,20 +7,20 @@ parser = argparse.ArgumentParser(description='Functionallity for the flask_templ
 command = parser.add_subparsers(dest="command")
 
 build = command.add_parser('build')
-lint = command.add_parser('lint')
+check_style = command.add_parser('check-style')
 run = command.add_parser('run')
 test = command.add_parser('test')
 
 args = parser.parse_args()
 
 if args.command == 'build':
-    print('Linting...')
-    os.system('Tools/lib/lint')
+    print('Checking style...')
+    os.system('Tools/lib/check-style')
     print('\nTesting...')
     os.system('Tools/lib/test')
-elif args.command == 'lint':
-    print('Linting...')
-    os.system('Tools/lib/lint')
+elif args.command == 'check-style':
+    print('Checking style...')
+    os.system('Tools/lib/check-style')
 elif args.command == 'run':
     os.system('Tools/lib/run')
 elif args.command == 'test':
