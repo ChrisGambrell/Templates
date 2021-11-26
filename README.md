@@ -41,6 +41,12 @@ Add the necessary directories to your `PATH`:
 Tools/Scripts
 ```
 
+Generate environment variables:
+
+```
+flaskr gen-env
+```
+
 ## Running
 
 ```

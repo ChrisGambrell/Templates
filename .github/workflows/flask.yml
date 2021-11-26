@@ -27,8 +27,7 @@ jobs:
         ./Tools/lib/check-style
     - name: Refresh secrets
       run: |
-        printf 'AUTH_SECRET=' > .env
-        python -c 'import secrets; print(secrets.token_hex())' >> .env
+        ./Tools/lib/gen-env
     - name: Test with coverage & pytest
       run: |
         ./Tools/lib/test
@@ -42,8 +41,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Refresh secrets
       run: |
-        printf 'AUTH_SECRET=' > .env
-        python -c 'import secrets; print(secrets.token_hex())' >> .env
+        ./Tools/lib/gen-env
     - uses: akhileshns/heroku-deploy@v3.12.12
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
