@@ -16,6 +16,7 @@ db.init_app(app)
 
 migrate = Migrate(app, db)
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)    # noqa: A003
     name = db.Column(db.String, nullable=False)

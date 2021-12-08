@@ -1,7 +1,7 @@
 """Add dates to user
 
 Revision ID: 0d852461326e
-Revises: 
+Revises:
 Create Date: 2021-12-07 19:39:58.979120
 
 """
