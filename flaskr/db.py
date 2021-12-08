@@ -17,7 +17,16 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
     tasks = db.relationship('Task', back_populates='user', cascade='all, delete')
+
+
+@event.listens_for(User, 'after_update')
+def user_after_update(mapper, connection, user):
+    @event.listens_for(Session, 'after_flush', once=True)
+    def user_after_flush(session, context):
+        session.execute(update(User).where(User.id == user.id).values(updated_at=datetime.utcnow()))
 
 
 class Task(db.Model):
@@ -25,8 +34,8 @@ class Task(db.Model):
     user = db.relationship('User', back_populates='tasks')
     body = db.Column(db.String, nullable=False)
     completed = db.Column(db.Boolean, default=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow())
-    created_at = db.Column(db.DateTime, default=datetime.utcnow())
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
