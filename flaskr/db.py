@@ -25,14 +25,14 @@ class User(db.Model):
 @event.listens_for(User, 'after_update')
 def user_after_update(mapper, connection, user):
     @event.listens_for(Session, 'after_flush', once=True)
-    def user_after_flush(session, context):
+    def after_flush(session, context):
         session.execute(update(User).where(User.id == user.id).values(updated_at=datetime.utcnow()))
 
 
 @event.listens_for(User, 'after_delete')
 def user_after_update(mapper, connection, user):
     @event.listens_for(Session, 'after_flush', once=True)
-    def user_after_flush(session, context):
+    def after_flush(session, context):
         session.execute(delete(Task).where(Task.id.in_([task.id for task in user.tasks])))
 
 
