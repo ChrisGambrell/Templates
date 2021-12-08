@@ -6,6 +6,7 @@ from flask.cli import with_appcontext
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy, event
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.expression import update
 
 db = SQLAlchemy()
 mb = Marshmallow()
@@ -33,7 +34,7 @@ class Task(db.Model):
 def task_after_update(mapper, connection, task):
     @event.listens_for(Session, 'after_flush', once=True)
     def task_after_flush(session, context):
-        task.updated_at = datetime.utcnow()
+        session.execute(update(Task).where(Task.id == task.id).values(updated_at=datetime.utcnow()))
 
 
 class UserSchema(mb.SQLAlchemyAutoSchema):
