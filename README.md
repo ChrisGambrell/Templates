@@ -68,6 +68,34 @@ flaskr test
 5. Request review
 6. Merge into main after review approval
 
+## Schemas
+
+### Task
+
+```
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+    tasks = db.relationship('Task', back_populates='user', cascade='all, delete')
+```
+
+### User
+
+```
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.relationship('User', back_populates='tasks')
+    body = db.Column(db.String, nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+```
+
 ## API Reference
 
 ### `GET /hello`
@@ -137,11 +165,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    name: <str>,
-    username: <str>,
-    password: <str>,
-    tasks: <[Task.id]>
+    User
 }
 ```
 
@@ -160,13 +184,7 @@ Return:
 ```
 [
     {
-        id: <int, primary>,
-        user: <User.id>,
-        body: <str>,
-        completed: <bool>,
-        updated_at: <DateTime>,
-        created_at: <DateTime>,
-        user_id: <User.id>
+        Task
     }
 ]
 ```
@@ -194,13 +212,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    user: <User.id>,
-    body: <str>,
-    completed: <bool>,
-    updated_at: <DateTime>,
-    created_at: <DateTime>,
-    user_id: <User.id>
+    Task
 }
 ```
 
@@ -218,13 +230,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    user: <User.id>,
-    body: <str>,
-    completed: <bool>,
-    updated_at: <DateTime>,
-    created_at: <DateTime>,
-    user_id: <User.id>
+    Task
 }
 ```
 
@@ -251,13 +257,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    user: <User.id>,
-    body: <str>,
-    completed: <bool>,
-    updated_at: <DateTime>,
-    created_at: <DateTime>,
-    user_id: <User.id>
+    Task
 }
 ```
 
@@ -291,11 +291,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    name: <str>,
-    username: <str>,
-    password: <str>,
-    tasks: <[Task.id]>
+    User
 }
 ```
 
@@ -322,11 +318,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    name: <str>,
-    username: <str>,
-    password: <str>,
-    tasks: <[Task.id]>
+    User
 }
 ```
 
@@ -360,10 +352,6 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    name: <str>,
-    username: <str>,
-    password: <str>,
-    tasks: <[Task.id]>
+    User
 }
 ```
