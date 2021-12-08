@@ -4,7 +4,8 @@ import click
 from datetime import datetime
 from flask.cli import with_appcontext
 from flask_marshmallow import Marshmallow
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, event
+from sqlalchemy.orm.session import Session
 
 db = SQLAlchemy()
 mb = Marshmallow()
@@ -23,9 +24,16 @@ class Task(db.Model):
     user = db.relationship('User', back_populates='tasks')
     body = db.Column(db.String, nullable=False)
     completed = db.Column(db.Boolean, default=False)
-    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
-    created_at = db.Column(db.DateTime, default=datetime.now())
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+@event.listens_for(Task, 'after_update')
+def task_after_update(mapper, connection, task):
+    @event.listens_for(Session, 'after_flush', once=True)
+    def task_after_flush(session, context):
+        task.updated_at = datetime.utcnow()
 
 
 class UserSchema(mb.SQLAlchemyAutoSchema):
