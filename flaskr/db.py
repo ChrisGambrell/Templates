@@ -15,6 +15,8 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     tasks = db.relationship('Task', back_populates='user', cascade='all, delete')
 
 
@@ -23,8 +25,8 @@ class Task(db.Model):
     user = db.relationship('User', back_populates='tasks')
     body = db.Column(db.String, nullable=False)
     completed = db.Column(db.Boolean, default=False)
-    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
-    created_at = db.Column(db.DateTime, default=datetime.now())
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
