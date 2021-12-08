@@ -6,7 +6,7 @@ from flask.cli import with_appcontext
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy, event
 from sqlalchemy.orm.session import Session
-from sqlalchemy.sql.expression import update
+from sqlalchemy.sql.expression import delete, update
 
 db = SQLAlchemy()
 mb = Marshmallow()
@@ -19,7 +19,7 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
-    tasks = db.relationship('Task', back_populates='user', cascade='all, delete')
+    tasks = db.relationship('Task', back_populates='user')
 
 
 @event.listens_for(User, 'after_update')
@@ -27,6 +27,13 @@ def user_after_update(mapper, connection, user):
     @event.listens_for(Session, 'after_flush', once=True)
     def user_after_flush(session, context):
         session.execute(update(User).where(User.id == user.id).values(updated_at=datetime.utcnow()))
+
+
+@event.listens_for(User, 'after_delete')
+def user_after_update(mapper, connection, user):
+    @event.listens_for(Session, 'after_flush', once=True)
+    def user_after_flush(session, context):
+        session.execute(delete(Task).where(Task.id.in_([task.id for task in user.tasks])))
 
 
 class Task(db.Model):
