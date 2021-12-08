@@ -23,6 +23,7 @@ setup(
         'flask',
         'flask-cors',
         'flask-marshmallow',
+        'flask-migrate',
         'flask-sqlalchemy',
         'gunicorn',
         'marshmallow-sqlalchemy',
