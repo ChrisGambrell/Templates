@@ -68,6 +68,17 @@ flaskr test
 5. Request review
 6. Merge into main after review approval
 
+### Change database schemas
+
+This project uses `Flask-Migrate` to manipulate the schemas.
+
+1. Run `export FLASK_APP=Tools/Scripts/migrate.py` to select the migration script
+2. Change the schemas to your desired configuration in the migration script found in `Tools/Scripts/migrate.py`
+3. Run `flask db migrate -m "Some commit message"` to create a commit. Make sure the message contains the necessary message for how the schema is changing
+4. Diagnose and change the generated revision file found in `migrations/versions` for upgrading and downgrading
+5. Run `flask db upgrade` to enable to changes to the schemas
+6. Copy the new schemas from the migration scipt and update the schemas found in `flaskr/db.py`
+
 ## Schemas
 
 ### Task
