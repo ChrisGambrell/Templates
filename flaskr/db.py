@@ -30,7 +30,7 @@ def user_after_update(mapper, connection, user):
 
 
 @event.listens_for(User, 'after_delete')
-def user_after_update(mapper, connection, user):
+def user_after_delete(mapper, connection, user):
     @event.listens_for(Session, 'after_flush', once=True)
     def after_flush(session, context):
         session.execute(delete(Task).where(Task.id.in_([task.id for task in user.tasks])))

@@ -11,6 +11,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 with app.app_context():
     from flaskr import db
-    
+
     db.init_app(app)
     migrate = Migrate(app, db.db)

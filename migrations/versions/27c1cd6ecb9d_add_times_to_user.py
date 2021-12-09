@@ -1,7 +1,7 @@
 """Add times to user
 
 Revision ID: 27c1cd6ecb9d
-Revises: 
+Revises:
 Create Date: 2021-12-08 21:22:05.966120
 
 """
