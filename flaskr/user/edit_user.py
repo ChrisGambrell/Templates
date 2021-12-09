@@ -28,8 +28,9 @@ def edit_user(authed_user, data, **kwargs):
     data = v.normalized(data, schema)
 
     for key in data.keys():
-        if key == 'username' and User.query.filter_by(username=data[key]).count() > 0:
-            return jsonify({'error': {'username': ['username is taken']}}), 401
+        if key == 'username' and data['username'] != authed_user.username:
+            if User.query.filter_by(username=data[key]).count() > 0:
+                return jsonify({'error': {'username': ['username is taken']}}), 401
         setattr(authed_user, key, data[key])
     db.session.commit()
 
