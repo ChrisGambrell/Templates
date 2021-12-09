@@ -68,6 +68,44 @@ flaskr test
 5. Request review
 6. Merge into main after review approval
 
+### Change database schemas
+
+This project uses `Flask-Migrate` to manipulate the schemas.
+
+1. Run `export FLASK_APP=Tools/Scripts/migrate.py` to select the migration script
+2. Change the schemas to your desired configuration in `flaskr/db.py`
+3. Run `flask db migrate -m "Some commit message"` to create a commit. Make sure the message contains the necessary message for how the schema is changing
+4. Diagnose and change the generated revision file found in `migrations/versions` for upgrading and downgrading
+5. Run `flask db upgrade` to enable to changes to the schemas
+
+## Schemas
+
+### Task
+
+```
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.relationship('User', back_populates='tasks')
+    body = db.Column(db.String, nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+```
+
+### User
+
+```
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+    tasks = db.relationship('Task', back_populates='user', cascade='all, delete')
+```
+
 ## API Reference
 
 ### `GET /hello`
@@ -137,11 +175,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    name: <str>,
-    username: <str>,
-    password: <str>,
-    tasks: <[Task.id]>
+    User
 }
 ```
 
@@ -160,13 +194,7 @@ Return:
 ```
 [
     {
-        id: <int, primary>,
-        user: <User.id>,
-        body: <str>,
-        completed: <bool>,
-        updated_at: <DateTime>,
-        created_at: <DateTime>,
-        user_id: <User.id>
+        Task
     }
 ]
 ```
@@ -194,13 +222,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    user: <User.id>,
-    body: <str>,
-    completed: <bool>,
-    updated_at: <DateTime>,
-    created_at: <DateTime>,
-    user_id: <User.id>
+    Task
 }
 ```
 
@@ -218,13 +240,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    user: <User.id>,
-    body: <str>,
-    completed: <bool>,
-    updated_at: <DateTime>,
-    created_at: <DateTime>,
-    user_id: <User.id>
+    Task
 }
 ```
 
@@ -251,13 +267,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    user: <User.id>,
-    body: <str>,
-    completed: <bool>,
-    updated_at: <DateTime>,
-    created_at: <DateTime>,
-    user_id: <User.id>
+    Task
 }
 ```
 
@@ -291,11 +301,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    name: <str>,
-    username: <str>,
-    password: <str>,
-    tasks: <[Task.id]>
+    User
 }
 ```
 
@@ -322,11 +328,7 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    name: <str>,
-    username: <str>,
-    password: <str>,
-    tasks: <[Task.id]>
+    User
 }
 ```
 
@@ -360,10 +362,6 @@ Return:
 
 ```
 {
-    id: <int, primary>,
-    name: <str>,
-    username: <str>,
-    password: <str>,
-    tasks: <[Task.id]>
+    User
 }
 ```
