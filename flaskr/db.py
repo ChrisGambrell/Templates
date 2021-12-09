@@ -17,20 +17,20 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    # updated_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
-    # created_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
     tasks = db.relationship('Task', back_populates='user')
 
 
-# @event.listens_for(User, 'after_update')
-# def user_after_update(mapper, connection, user):
-#     @event.listens_for(Session, 'after_flush', once=True)
-#     def after_flush(session, context):
-#         session.execute(update(User).where(User.id == user.id).values(updated_at=datetime.utcnow()))
+@event.listens_for(User, 'after_update')
+def user_after_update(mapper, connection, user):
+    @event.listens_for(Session, 'after_flush', once=True)
+    def after_flush(session, context):
+        session.execute(update(User).where(User.id == user.id).values(updated_at=datetime.utcnow()))
 
 
 @event.listens_for(User, 'after_delete')
-def user_after_update(mapper, connection, user):
+def user_after_delete(mapper, connection, user):
     @event.listens_for(Session, 'after_flush', once=True)
     def after_flush(session, context):
         session.execute(delete(Task).where(Task.id.in_([task.id for task in user.tasks])))
